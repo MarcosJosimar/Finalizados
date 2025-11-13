@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Gamificado - Programação</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Partículas de fundo -->
+    <div class="particles"></div>
+
+    <!-- Container Principal -->
+    <div class="container">
+
+        <!-- Tela de Início -->
+        <div id="startScreen" class="screen active">
+            <div class="logo-container">
+                <div class="logo-icon">💻</div>
+                <h1 class="game-title">Quiz Gamificado</h1>
+                <p class="game-subtitle">Teste seus conhecimentos em programação</p>
+            </div>
+
+            <div class="start-form">
+                <div class="input-group">
+                    <label for="playerName">Seu Nome:</label>
+                    <input type="text" id="playerName" placeholder="Digite seu nome" maxlength="20">
+                </div>
+
+                <div class="input-group">
+                    <label for="languageSelect">Escolha a Linguagem:</label>
+                    <select id="languageSelect">
+                        <option value="all">Todas as Linguagens 🌐</option>
+                        <option value="csharp">C# 🔷</option>
+                        <option value="html">HTML 🌐</option>
+                        <option value="css">CSS 🎨</option>
+                        <option value="javascript">JavaScript ⚡</option>
+                        <option value="angular">Angular 🅰️</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="difficultySelect">Nível de Dificuldade:</label>
+                    <select id="difficultySelect">
+                        <option value="all">Todos os Níveis 📊</option>
+                        <option value="iniciante">Iniciante 🟢</option>
+                        <option value="intermediario">Intermediário 🟡</option>
+                        <option value="avancado">Avançado 🔴</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary btn-large" onclick="startQuiz()">
+                    <span>Iniciar Quiz</span>
+                    <span class="btn-icon">🚀</span>
+                </button>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Sistema de Pontos</h3>
+                    <p>Ganhe pontos por resposta correta</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Conquistas</h3>
+                    <p>Desbloqueie achievements especiais</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Níveis</h3>
+                    <p>Suba de nível conforme progride</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela do Quiz -->
+        <div id="quizScreen" class="screen">
+            <!-- Header com Informações do Jogador -->
+            <div class="quiz-header">
+                <div class="player-info">
+                    <div class="player-avatar">👤</div>
+                    <div class="player-details">
+                        <div class="player-name" id="playerNameDisplay"></div>
+                        <div class="player-title" id="playerTitle">Novato</div>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">Nível</span>
+                        <span class="stat-value" id="playerLevel">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pontos</span>
+                        <span class="stat-value" id="playerPoints">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Precisão</span>
+                        <span class="stat-value" id="playerAccuracy">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de Progresso -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Questão 1 de 10</div>
+            </div>
+
+            <!-- Área da Questão -->
+            <div class="question-container">
+                <div class="question-header">
+                    <span class="question-language" id="questionLanguage">C#</span>
+                    <span class="question-difficulty" id="questionDifficulty">Iniciante</span>
+                    <span class="question-points" id="questionPoints">+10 pontos</span>
+                </div>
+
+                <div class="question-text" id="questionText">
+                    Carregando pergunta...
+                </div>
+
+                <div class="options-container" id="optionsContainer">
+                    <!-- Opções serão inseridas dinamicamente -->
+                </div>
+
+                <button class="btn btn-secondary" onclick="skipQuestion()">
+                    Pular Questão ⏭️
+                </button>
+            </div>
+        </div>
+
+        <!-- Tela de Feedback -->
+        <div id="feedbackScreen" class="screen">
+            <div class="feedback-container">
+                <div class="feedback-icon" id="feedbackIcon">✅</div>
+                <h2 class="feedback-title" id="feedbackTitle">Correto!</h2>
+                <div class="feedback-points" id="feedbackPoints">+10 pontos</div>
+
+                <div class="feedback-explanation">
+                    <h3>Explicação:</h3>
+                    <p id="feedbackExplanation"></p>
+                </div>
+
+                <div class="feedback-correct-answer" id="feedbackCorrectAnswer" style="display: none;">
+                    <h3>Resposta Correta:</h3>
+                    <p id="correctAnswerText"></p>
+                </div>
+
+                <!-- Conquistas Desbloqueadas -->
+                <div id="achievementUnlocked" class="achievement-popup" style="display: none;">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-text">
+                        <h3>Conquista Desbloqueada!</h3>
+                        <p id="achievementName"></p>
+                    </div>
+                </div>
+
+                <!-- Level Up -->
+                <div id="levelUpNotification" class="level-up-popup" style="display: none;">
+                    <div class="level-up-icon">⭐</div>
+                    <div class="level-up-text">
+                        <h3>Level Up!</h3>
+                        <p id="newLevelText"></p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="nextQuestion()">
+                    Próxima Questão →
+                </button>
+            </div>
+        </div>
+
+        <!-- Tela de Resultados -->
+        <div id="resultsScreen" class="screen">
+            <div class="results-container">
+                <h1 class="results-title">Quiz Finalizado! 🎉</h1>
+
+                <div class="final-stats">
+                    <div class="final-stat-card">
+                        <div class="final-stat-icon">✅</div>
+                        <div class="final-stat-value" id="finalCorrect">0</div>
+                        <div class="final-stat-label">Corretas</div>
+                    </div>
+                    <div class="final-stat-card">
+                        <div class="final-stat-icon">❌</div>
+                        <div class="final-stat-value" id="finalWrong">0</div>
+                        <div class="final-stat-label">Erradas</div>
+                    </div>
+                    <div class="final-stat-card">
+                        <div class="final-stat-icon">🎯</div>
+                        <div class="final-stat-value" id="finalAccuracy">0%</div>
+                        <div class="final-stat-label">Precisão</div>
+                    </div>
+                    <div class="final-stat-card">
+                        <div class="final-stat-icon">⭐</div>
+                        <div class="final-stat-value" id="finalPoints">0</div>
+                        <div class="final-stat-label">Pontos</div>
+                    </div>
+                </div>
+
+                <div class="player-rank">
+                    <div class="rank-badge" id="rankBadge">🏅</div>
+                    <h2 id="finalTitle">Novato</h2>
+                    <p>Nível <span id="finalLevel">1</span></p>
+                </div>
+
+                <div class="achievements-container">
+                    <h3>Conquistas Desbloqueadas 🏆</h3>
+                    <div class="achievements-list" id="achievementsList">
+                        <!-- Conquistas serão inseridas aqui -->
+                    </div>
+                </div>
+
+                <div class="performance-message" id="performanceMessage">
+                    <!-- Mensagem motivacional baseada no desempenho -->
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn btn-primary" onclick="restartQuiz()">
+                        Jogar Novamente 🔄
+                    </button>
+                    <button class="btn btn-secondary" onclick="backToStart()">
+                        Voltar ao Início 🏠
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Som de Feedback (opcional) -->
+    <audio id="correctSound" preload="auto">
+        <source src="assets/correct.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="wrongSound" preload="auto">
+        <source src="assets/wrong.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="achievementSound" preload="auto">
+        <source src="assets/achievement.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="js/questions.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
